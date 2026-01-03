@@ -153,7 +153,7 @@ void MOBB3D_Brute_Force(struct point3D *new_vals, size_t num_points, struct MOBB
         {
             // Collinear case: The cross product calculation will always come out as the zero in the main computation due to collinearity (which causes us to never run the innermost loop).
             // (dirVec would have been set if at least two points were unique)
-            if ( dirVec.x != DOUBLE_INFINITY )
+            if ( !isfinite(dirVec.x) )
             {
                 double max_k = dot3D(new_vals[0], dirVec);
                 double min_k = max_k;
