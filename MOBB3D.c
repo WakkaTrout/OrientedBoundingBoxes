@@ -143,6 +143,7 @@ void MOBB3D_Brute_Force(struct point3D *new_vals, size_t num_points, struct MOBB
                     }
                 }
             }
+            // TODO: Do we need to consider the unique angle case as well?
         }
     }
     // This is to check to see that the MOBB even has volume (i.e., that the most inner loop actually ran once)
