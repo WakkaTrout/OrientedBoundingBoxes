@@ -320,8 +320,9 @@ void MOBB2D_Convex_Hull_Culled_Brute_Force(struct point2D *new_vals, size_t num_
 }
 
 // This computes the MOBB for a 2D point set the brute force way
-// It runs an O(n) calculation on top of the <= n Convex hull edges. As the convex hull calculation takes at most O(n log(n)) steps,
-// This runs in time O(n^2)
+// It runs an O(h) calculation on top of the h Convex hull edges. As the convex hull calculation takes at most O(n log(n)) steps,
+// This runs in time O(n log(n) + h^2).
+// Worst case, all points are convex hull vertices, giving the total algorithm runtime to be O(n^2)
 // This was discovered independently by the author through algrebraic means and later found to have already been written
 // and implemented by the CGAL library. This is included here for comparison.
 void MOBB2D_Convex_Hull_Brute_Force(struct point2D *new_vals, size_t num_points,struct MOBB2D *output)
