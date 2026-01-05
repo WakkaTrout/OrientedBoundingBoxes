@@ -237,8 +237,8 @@ size_t Convex_Hull_2D(struct point2D *new_vals, size_t num_points, struct point2
 }
 
 // This computes the MOBB for a 2D point set the brute force way (it culls the interior convex hull points only, but still considers interior edges between the vertices)
-// Worst case, all points are convex hull vertices and it runs in the same time complexity as the pure brute force approach
 // Runs in time O(n log(n)+h^3) where h is the number of convex hull vertices of the point set
+// Worst case, all points are convex hull vertices and it runs in the same time complexity as the pure brute force approach O(n^3)
 void MOBB2D_Convex_Hull_Culled_Brute_Force(struct point2D *new_vals, size_t num_points,struct MOBB2D *output)
 {
     double mobbArea = DOUBLE_INFINITY;
