@@ -437,6 +437,7 @@ void MOBB2D_Convex_Hull_Directed_Brute_Force(struct point2D *new_vals, size_t nu
             double min_k = max_k;
             double max_k_perp = dot2D(convex_hull[0], Pij_perp);
             //Optimization: We know Pij_perp points inwards due to ordering of convex hull points and how we compute it. Since Pi and Pj form a convex hull edge, they must be the min value in the Pij_perp direction
+            //              Also, choice of using Pi vs Pj doesn't matter since dot2D(Pi, Pij_perp) == dot2D(Pj, Pij_perp)
             double min_k_perp = dot2D(convex_hull[i], Pij_perp);
             // find the extents for the given Pij
             for ( int k = 1; k < convex_hull_num_points; ++k )
