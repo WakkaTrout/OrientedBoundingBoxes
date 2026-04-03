@@ -24,6 +24,7 @@ inline double dot2D(struct point2D P1, struct point2D P2)
     return P1.x*P2.x + P1.y*P2.y;
 }
 
+// TODO: Add the slowest brute force that loops from i=0to num points and j=0 to num points (to make the next one look like a small optimization)
 
 // This computes the MOBB for a 2D point set the brute force way
 // Runs in time O(n^3)
