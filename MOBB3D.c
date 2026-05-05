@@ -31,6 +31,8 @@ inline struct point3D cross3D(struct point3D P1, struct point3D P2)
     return result;
 }
 
+// TODO: Implement the loops without the first two if checks (only relying on the third if statement to skip orientations that are undefined)
+
 // TODO: Remove direction cache and do n^2 loop for collinear case. This is so we can examine the performance penalty of writing often to a cache in the standard case
 
 
