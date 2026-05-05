@@ -198,3 +198,5 @@ void MOBB3D_Brute_Force(struct point3D *new_vals, size_t num_points, struct MOBB
 }
 
 // TODO: MOBB that uses Convex Hull Algorithms like O'Rourke's algorithm
+
+// TODO: Prove Correctness of Jukka's Algorithm (https://clb.confined.space/minobb/minobb.html) and implement it
