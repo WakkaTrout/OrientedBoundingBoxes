@@ -24,11 +24,85 @@ inline double dot2D(struct point2D P1, struct point2D P2)
     return P1.x*P2.x + P1.y*P2.y;
 }
 
-// TODO: Add the slowest brute force that loops from i=0to num points and j=0 to num points (to make the next one look like a small optimization)
-
 // This computes the MOBB for a 2D point set the brute force way
 // Runs in time O(n^3)
 void MOBB2D_Brute_Force(struct point2D *new_vals, size_t num_points,struct MOBB2D *output)
+{
+    double mobbArea = DOUBLE_INFINITY;
+    // Loop through all pairs of points (brute force doesn't consider anything special about the edges)
+    for ( int i = 0; i < num_points; ++i )
+    {
+        for ( int j = 0; j < num_points; ++j )
+        {
+            struct point2D Pij = {new_vals[i].x-new_vals[j].x, new_vals[i].y-new_vals[j].y};
+            // Make sure this is not the zero vector or the critical points is no longer defined
+            if ( Pij.x != 0 || Pij.y != 0 )
+            {
+                struct point2D Pij_perp = {-Pij.y, Pij.x};
+                double max_k = dot2D(new_vals[0], Pij);
+                double min_k = max_k;
+                double max_k_perp = dot2D(new_vals[0], Pij_perp);
+                double min_k_perp = max_k_perp;
+                // find the extents for the given Pij
+                for ( int k = 1; k < num_points; ++k )
+                {
+                    double pij_dot = dot2D(new_vals[k], Pij);
+                    double pij_perp_dot = dot2D(new_vals[k], Pij_perp);
+                    if (pij_dot > max_k)
+                    {
+                        max_k = pij_dot;
+                    }
+                    if (pij_dot < min_k)
+                    {
+                        min_k = pij_dot;
+                    }
+                    if (pij_perp_dot > max_k_perp)
+                    {
+                        max_k_perp = pij_perp_dot;
+                    }
+                    if (pij_perp_dot < min_k_perp)
+                    {
+                        min_k_perp = pij_perp_dot;
+                    }
+                }
+                double area_ij = (max_k-min_k)*(max_k_perp-min_k_perp)/(Pij.x*Pij.x+Pij.y*Pij.y);
+                if (area_ij < mobbArea)
+                {
+                    mobbArea = area_ij;
+                    double dir_norm = Pij.x*Pij.x+Pij.y*Pij.y; // squared since dot product was not calculated with normed vectors
+                    output->corners[0].x = (Pij.x*min_k + Pij_perp.x*min_k_perp)/dir_norm;
+                    output->corners[0].y = (Pij.y*min_k + Pij_perp.y*min_k_perp)/dir_norm;
+                    output->corners[1].x = (Pij.x*min_k + Pij_perp.x*max_k_perp)/dir_norm;
+                    output->corners[1].y = (Pij.y*min_k + Pij_perp.y*max_k_perp)/dir_norm;
+                    output->corners[2].x = (Pij.x*max_k + Pij_perp.x*min_k_perp)/dir_norm;
+                    output->corners[2].y = (Pij.y*max_k + Pij_perp.y*min_k_perp)/dir_norm;
+                    output->corners[3].x = (Pij.x*max_k + Pij_perp.x*max_k_perp)/dir_norm;
+                    output->corners[3].y = (Pij.y*max_k + Pij_perp.y*max_k_perp)/dir_norm;
+                }
+            }
+        }
+    }
+    // This is to check to see that the MOBB even has area (i.e., that the most inner loop actually ran once)
+    if (!isfinite(mobbArea))
+    {
+        if ( num_points > 0 )
+        {
+            // If we have duplicate points only, then the MOBB is just that singular point, so copy it into all four corners
+            for ( size_t i = 0; i < 4; ++i )
+            {
+                output->corners[i] = new_vals[0];
+            }
+        }
+        else
+        {
+            printf("bruh, please at least calculate the MOBB with points. you gave me nothing\n");
+        }
+    }
+}
+
+// This computes the MOBB for a 2D point set the brute force way with a minor optimization to the loop bound
+// Runs in time O(n^3)
+void MOBB2D_Brute_Force_Loop_Bounds(struct point2D *new_vals, size_t num_points,struct MOBB2D *output)
 {
     double mobbArea = DOUBLE_INFINITY;
     // Loop through all pairs of points (brute force doesn't consider anything special about the edges)
@@ -422,10 +496,10 @@ void MOBB2D_Convex_Hull_Directed_Stable_Brute_Force(struct point2D *new_vals, si
                 output->corners[0].y = (Pij.y*min_k + Pij_perp.y*min_k_perp)/dir_norm;
                 output->corners[1].x = (Pij.x*min_k + Pij_perp.x*max_k_perp)/dir_norm;
                 output->corners[1].y = (Pij.y*min_k + Pij_perp.y*max_k_perp)/dir_norm;
-                output->corners[2].x = (Pij.x*max_k + Pij_perp.x*min_k_perp)/dir_norm;
-                output->corners[2].y = (Pij.y*max_k + Pij_perp.y*min_k_perp)/dir_norm;
-                output->corners[3].x = (Pij.x*max_k + Pij_perp.x*max_k_perp)/dir_norm;
-                output->corners[3].y = (Pij.y*max_k + Pij_perp.y*max_k_perp)/dir_norm;
+                output->corners[2].x = (Pij.x*max_k + Pij_perp.x*max_k_perp)/dir_norm;
+                output->corners[2].y = (Pij.y*max_k + Pij_perp.y*max_k_perp)/dir_norm;
+                output->corners[3].x = (Pij.x*max_k + Pij_perp.x*min_k_perp)/dir_norm;
+                output->corners[3].y = (Pij.y*max_k + Pij_perp.y*min_k_perp)/dir_norm;
             }
         }
         else
