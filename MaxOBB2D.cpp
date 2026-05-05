@@ -30,6 +30,7 @@ void MaxOBB2D_Brute_Force(struct point2D *new_vals, size_t num_points,struct MOB
                             double Pij_norm = sqrt(Pij.x*Pij.x + Pij.y+Pij.y);
                             double Pkl_norm = sqrt(Pkl.x*Pkl.x + Pkl.y+Pkl.y);
                             double Mixed_term = fabs(Pij.x*Pkl.y + Pkl.x*Pij.y);
+                            // TODO: The below sign_term divides by a value that is not accounted for in previous checks. This implies that a) the max cannot occur at that orientation and must be culled or b) there is a special case not being handled. Look into this to see how to resolve it
                             double sign_term = ((Pij.x*Pkl.x-Pij.y*Pkl.y)/(Pij.x*Pkl.y+Pkl.x*Pij.y)>0?1.0:-1.0);
                             struct point2D Qijkl = {sqrt(Pij_norm*Pkl_norm+Mixed_term), -sign_term*sqrt(Pij_norm*Pkl_norm-Mixed_term)};
                             struct point2D Qijklperp = {Qijkl.y, -Qijkl.x};
