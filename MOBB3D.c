@@ -31,12 +31,15 @@ inline struct point3D cross3D(struct point3D P1, struct point3D P2)
     return result;
 }
 
+// TODO: Remove direction cache and do n^2 loop for collinear case. This is so we can examine the performance penalty of writing often to a cache in the standard case
+
+
 // Brute Forces the 3D MOBB by considering all possible orientations (and a bunch extra)
 // Runs in time O(n^7)
 void MOBB3D_Brute_Force(struct point3D *new_vals, size_t num_points, struct MOBB3D *output)
 {
     double mobbVolume = DOUBLE_INFINITY;
-    struct point3D dirVec = {DOUBLE_INFINITY, DOUBLE_INFINITY, DOUBLE_INFINITY}; // this is to cache a non-zero vector to help if the points are all collinear
+    struct point3D dirVec = {DOUBLE_INFINITY, DOUBLE_INFINITY, DOUBLE_INFINITY}; // this is to cache a non-zero vector to help if the points are all collinear. Otherwise, we will need to run an n^2 check to find two distinct points for the collinear test (so this speeds it up a bit)
     // Loop through triples of all pairs of points (brute force doesn't consider anything special about the edges)
     for ( size_t i = 0; i < num_points; ++i )
     {
